@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>EduNova — Smart E-Learning Management System | DBMS Project</title>
+<meta name="description" content="EduNova: a database-driven Smart E-Learning Management System with full CRUD on users, courses, enrollments, assignments, submissions and grades. Built for Flask integration." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b17; --bg-2:#0b1124;
+  --surface:rgba(255,255,255,0.04); --surface-2:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.08); --border-2:rgba(255,255,255,0.14);
+  --text:#e9ecf5; --muted:#9aa3b8;
+  --primary:#7c5cff; --primary-2:#22d3ee; --accent:#34d399;
+  --warn:#f59e0b; --danger:#f43f5e;
+  --grad:linear-gradient(135deg,#7c5cff 0%,#22d3ee 100%);
+  --grad-soft:linear-gradient(135deg,rgba(124,92,255,.25),rgba(34,211,238,.18));
+  --shadow-lg:0 30px 80px -30px rgba(124,92,255,.45),0 10px 30px -10px rgba(0,0,0,.6);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+code,pre{font-family:'JetBrains Mono',ui-monospace,monospace}
+
+.bg-fx{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
+  radial-gradient(1000px 600px at 85% -10%,rgba(124,92,255,.25),transparent 60%),
+  radial-gradient(900px 500px at -10% 20%,rgba(34,211,238,.18),transparent 60%),
+  radial-gradient(700px 400px at 50% 110%,rgba(52,211,153,.12),transparent 60%),
+  linear-gradient(180deg,#070b17 0%,#0a0f22 100%);}
+.bg-grid{position:fixed;inset:0;z-index:-1;background-image:
+  linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:42px 42px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%);pointer-events:none}
+
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(7,11,23,.55);border-bottom:1px solid var(--border)}
+.nav-row{display:flex;align-items:center;justify-content:space-between;height:68px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--grad);display:grid;place-items:center;box-shadow:0 8px 24px -10px rgba(124,92,255,.7)}
+.logo svg{width:20px;height:20px;color:#0b1124}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+nav ul{display:flex;gap:28px;list-style:none;padding:0;margin:0}
+nav a{color:var(--muted);font-size:14px;font-weight:500;transition:.2s;cursor:pointer}
+nav a:hover{color:#fff}
+.nav-cta{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;font-weight:600;font-size:14px;border:1px solid transparent;cursor:pointer;transition:transform .15s ease,box-shadow .2s ease,background .2s;font-family:inherit}
+.btn:hover{transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover{background:var(--surface)}
+.btn-primary{background:var(--grad);color:#0b1124;box-shadow:0 10px 30px -10px rgba(124,92,255,.6)}
+.btn-primary:hover{box-shadow:0 14px 40px -10px rgba(124,92,255,.8)}
+.btn-sm{padding:6px 12px;font-size:12.5px;border-radius:9px}
+.btn-danger{background:rgba(244,63,94,.12);color:#fda4af;border:1px solid rgba(244,63,94,.3)}
+.btn-danger:hover{background:rgba(244,63,94,.2)}
+.btn-warn{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
+.btn-warn:hover{background:rgba(245,158,11,.2)}
+
+/* Hero */
+.hero{padding:80px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:6px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.eyebrow .dot{width:6px;height:6px;border-radius:99px;background:var(--accent);box-shadow:0 0 0 4px rgba(52,211,153,.18)}
+h1{font-size:clamp(38px,5.4vw,60px);line-height:1.05;margin:18px 0 18px;letter-spacing:-.02em;font-weight:800}
+h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{color:var(--muted);font-size:18px;max-width:560px}
+.hero-cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px;max-width:620px}
+.kpi{padding:14px;border:1px solid var(--border);background:var(--surface);border-radius:14px}
+.kpi b{font-size:22px;display:block;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.kpi span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+
+.mock{position:relative;border-radius:24px;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid var(--border-2);box-shadow:var(--shadow-lg)}
+.mock::before{content:"";position:absolute;inset:-1px;border-radius:25px;background:var(--grad);z-index:-1;filter:blur(20px);opacity:.35}
+.mock-head{display:flex;gap:8px;align-items:center;padding:6px 8px 14px}
+.mock-head i{width:10px;height:10px;border-radius:99px;background:#3a4360;display:inline-block}
+.mock-head i:nth-child(1){background:#ff5f57}.mock-head i:nth-child(2){background:#febc2e}.mock-head i:nth-child(3){background:#28c840}
+.mock-head span{margin-left:10px;color:var(--muted);font-size:12px}
+
+/* Sections */
+section{padding:80px 0;position:relative}
+.section-head{text-align:center;max-width:720px;margin:0 auto 48px}
+h2{font-size:clamp(28px,3.4vw,42px);letter-spacing:-.02em;margin:14px 0 12px;font-weight:800}
+.section-head p{color:var(--muted);font-size:17px}
+
+/* Console / CRUD */
+.console{border:1px solid var(--border-2);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));overflow:hidden;box-shadow:var(--shadow-lg)}
+.console-bar{display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(0,0,0,.25);border-bottom:1px solid var(--border)}
+.console-bar .dots i{width:10px;height:10px;border-radius:99px;display:inline-block;margin-right:5px}
+.console-bar .dots i:nth-child(1){background:#ff5f57}.console-bar .dots i:nth-child(2){background:#febc2e}.console-bar .dots i:nth-child(3){background:#28c840}
+.console-bar .url{flex:1;font-family:'JetBrains Mono';font-size:12px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);padding:6px 12px;border-radius:8px;text-align:center}
+.console-bar .status{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#86efac;font-weight:600}
+.console-bar .status i{width:7px;height:7px;border-radius:99px;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.18)}
+
+.tabbar{display:flex;gap:4px;padding:10px 14px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabbar::-webkit-scrollbar{display:none}
+.tab-btn{padding:9px 16px;font-size:13px;color:var(--muted);border-radius:10px;cursor:pointer;font-weight:600;white-space:nowrap;border:1px solid transparent;display:inline-flex;align-items:center;gap:8px;background:transparent;font-family:inherit}
+.tab-btn:hover{color:#fff}
+.tab-btn.active{background:var(--surface-2);color:#fff;border-color:var(--border-2)}
+.tab-btn .count{font-size:10.5px;padding:2px 7px;border-radius:99px;background:var(--grad-soft);color:#c4b5fd;font-weight:700}
+
+.panel{display:none;padding:24px}
+.panel.active{display:block}
+
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px;flex-wrap:wrap}
+.panel-head h3{margin:0 0 4px;font-size:20px}
+.panel-head p{margin:0;color:var(--muted);font-size:13.5px}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.search{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;padding:9px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:11px;transition:.2s}
+.search:focus-within{border-color:rgba(124,92,255,.5);background:rgba(255,255,255,.06)}
+.search svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.search input{flex:1;background:transparent;border:0;outline:0;color:#fff;font-family:inherit;font-size:13.5px}
+.search input::placeholder{color:var(--muted)}
+
+/* Tables */
+.tbl-wrap{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(0,0,0,.18)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;padding:13px 16px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+td{padding:13px 16px;border-bottom:1px solid var(--border);color:#e9ecf5;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr.row{transition:.15s}
+tr.row:hover{background:rgba(124,92,255,.06)}
+.id-chip{display:inline-block;font-family:'JetBrains Mono';font-size:11.5px;padding:3px 8px;border-radius:6px;background:rgba(124,92,255,.15);color:#c4b5fd;border:1px solid rgba(124,92,255,.25)}
+.role-chip{font-size:11px;padding:3px 9px;border-radius:99px;font-weight:600}
+.role-Student{background:rgba(34,211,238,.15);color:#67e8f9;border:1px solid rgba(34,211,238,.3)}
+.role-Instructor{background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
+.status-chip{font-size:11px;padding:3px 9px;border-radius:99px;font-weight:600}
+.status-Submitted{background:rgba(52,211,153,.15);color:#86efac;border:1px solid rgba(52,211,153,.3)}
+.status-Pending{background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
+.status-Late{background:rgba(244,63,94,.15);color:#fda4af;border:1px solid rgba(244,63,94,.3)}
+.row-actions{display:flex;gap:6px;justify-content:flex-end}
+.empty{padding:50px 20px;text-align:center;color:var(--muted);font-size:14px}
+.empty svg{width:42px;height:42px;opacity:.4;margin-bottom:10px}
+
+/* Modal */
+.modal-back{position:fixed;inset:0;background:rgba(3,5,12,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;animation:fade .2s ease}
+.modal-back.open{display:flex}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.modal{width:100%;max-width:520px;background:linear-gradient(180deg,#10162b,#0a0f22);border:1px solid var(--border-2);border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden;animation:pop .25s cubic-bezier(.2,.7,.2,1)}
+.modal-head{padding:22px 24px 8px;display:flex;justify-content:space-between;align-items:flex-start}
+.modal-head h3{margin:0 0 4px;font-size:18px}
+.modal-head p{margin:0;color:var(--muted);font-size:13px}
+.modal-close{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:22px;padding:0 4px;line-height:1}
+.modal-close:hover{color:#fff}
+.modal-body{padding:18px 24px}
+.modal-foot{padding:14px 24px 22px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);margin-top:6px;background:rgba(0,0,0,.2)}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.field input,.field select,.field textarea{width:100%;padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:#fff;font-family:inherit;font-size:14px;outline:none;transition:.15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(124,92,255,.55);background:rgba(255,255,255,.06);box-shadow:0 0 0 4px rgba(124,92,255,.12)}
+.field textarea{resize:vertical;min-height:80px;font-family:inherit}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field select option{background:#10162b;color:#fff}
+.hint{font-size:11.5px;color:var(--muted);margin-top:6px;font-family:'JetBrains Mono'}
+
+/* Toast */
+.toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:200;max-width:340px}
+.toast{padding:13px 16px;border-radius:12px;background:#10162b;border:1px solid var(--border-2);box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:12px;animation:slideIn .3s cubic-bezier(.2,.7,.2,1);font-size:13.5px}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.toast .ti{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex-shrink:0}
+.toast.ok .ti{background:rgba(52,211,153,.15);color:#86efac}
+.toast.err .ti{background:rgba(244,63,94,.15);color:#fda4af}
+.toast.info .ti{background:rgba(124,92,255,.15);color:#c4b5fd}
+.toast b{display:block;font-weight:700;margin-bottom:2px}
+.toast span{color:var(--muted);font-size:12px;display:block}
+
+/* Activity log */
+.log{margin-top:18px;border:1px solid var(--border);border-radius:12px;background:rgba(0,0,0,.25);max-height:180px;overflow:auto;font-family:'JetBrains Mono';font-size:12px}
+.log-head{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--muted);font-weight:600;display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;position:sticky;top:0;background:rgba(7,11,23,.95);backdrop-filter:blur(6px)}
+.log-head button{background:transparent;border:0;color:var(--muted);cursor:pointer;font-family:inherit;font-size:11px}
+.log-head button:hover{color:#fff}
+.log-line{padding:7px 14px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.log-line:last-child{border:0}
+.log-line .m{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;flex-shrink:0;width:60px;text-align:center}
+.m-POST{background:rgba(52,211,153,.15);color:#86efac}
+.m-PUT{background:rgba(245,158,11,.15);color:#fcd34d}
+.m-DELETE{background:rgba(244,63,94,.15);color:#fda4af}
+.m-GET{background:rgba(34,211,238,.15);color:#67e8f9}
+.log-line .t{color:var(--muted);font-size:10.5px;margin-left:auto;flex-shrink:0}
+
+/* Misc */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{padding:26px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);transition:.25s}
+.card:hover{transform:translateY(-4px);border-color:var(--border-2);background:var(--surface-2)}
+.card .ico{width:44px;height:44px;border-radius:12px;background:var(--grad-soft);display:grid;place-items:center;margin-bottom:16px;border:1px solid var(--border-2)}
+.card .ico svg{width:22px;height:22px;color:#c4b5fd}
+.card h3{margin:0 0 8px;font-size:18px}
+.card p{color:var(--muted);font-size:14px;margin:0}
+
+.team{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.member{padding:26px;border-radius:18px;background:var(--surface);border:1px solid var(--border);text-align:center;transition:.2s}
+.member:hover{border-color:var(--border-2);background:var(--surface-2)}
+.avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;background:var(--grad);color:#0b1124;font-weight:800;font-size:24px;box-shadow:0 10px 30px -10px rgba(124,92,255,.5)}
+.member h4{margin:0 0 4px}
+.member span{color:var(--muted);font-size:13px;font-family:'JetBrains Mono'}
+
+.cta-card{padding:60px;border-radius:24px;background:linear-gradient(135deg,rgba(124,92,255,.18),rgba(34,211,238,.12));border:1px solid var(--border-2);text-align:center;position:relative;overflow:hidden}
+footer{padding:40px 0;border-top:1px solid var(--border);color:var(--muted);font-size:13px;text-align:center}
+footer b{color:#fff}
+
+.reveal{opacity:0;transform:translateY(20px);transition:.8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:920px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .features,.team{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  nav ul{display:none}
+  .cta-card{padding:36px 22px}
+  .field-row{grid-template-columns:1fr}
+  th:nth-child(n+4),td:nth-child(n+4){display:none}
+}
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+<div class="bg-grid"></div>
+
+<header class="nav">
+  <div class="container nav-row">
+    <a class="brand" href="#">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+      <div>EduNova<small>Smart LMS</small></div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#console">Console</a></li>
+        <li><a href="#api">API</a></li>
+        <li><a href="#team">Team</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="#api">API Docs</a>
+      <a class="btn btn-primary" href="#console">Open Console →</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="reveal">
+      <span class="eyebrow"><span class="dot"></span> CSN205 · Database Management Systems</span>
+      <h1>Learning, <span class="grad">re-engineered</span> on a relational core.</h1>
+      <p class="lede">EduNova is a database-driven Smart LMS with a full interactive admin console. Create, read, update and delete across users, courses, enrollments, assignments and grades — ready to wire into your Flask backend.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#console">Try the Console
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#api">REST Endpoints</a>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b id="kpi-users">0</b><span>Users</span></div>
+        <div class="kpi"><b id="kpi-courses">0</b><span>Courses</span></div>
+        <div class="kpi"><b id="kpi-assign">0</b><span>Assignments</span></div>
+        <div class="kpi"><b id="kpi-grades">0</b><span>Grades</span></div>
+      </div>
+    </div>
+
+    <div class="mock reveal">
+      <div class="mock-head"><i></i><i></i><i></i><span>edunova.app / admin</span></div>
+      <div style="padding:14px;background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div>
+            <div style="font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-weight:700">Live Activity</div>
+            <div style="font-size:15px;font-weight:700;margin-top:2px">Recent operations</div>
+          </div>
+          <span class="eyebrow" style="font-size:10px;padding:4px 10px"><span class="dot"></span> Connected</span>
+        </div>
+        <div id="hero-activity" style="display:flex;flex-direction:column;gap:8px;font-family:'JetBrains Mono';font-size:12px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONSOLE -->
+<section id="console">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Interactive admin</span>
+      <h2>Manage every entity in real time.</h2>
+      <p>Full CRUD on each table — clicks fire mock REST calls. Plug in your Flask endpoints inside <code style="color:#c4b5fd">api()</code> at the bottom of this file.</p>
+    </div>
+
+    <div class="console reveal">
+      <div class="console-bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <div class="url">GET <span style="color:#86efac">/api/v1/</span><span id="active-endpoint">users</span></div>
+        <span class="status"><i></i> Mock mode</span>
+      </div>
+
+      <div class="tabbar" id="tabbar">
+        <button class="tab-btn active" data-tab="users">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          Users <span class="count" id="c-users">0</span>
+        </button>
+        <button class="tab-btn" data-tab="courses">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h8M8 11h8"/></svg>
+          Courses <span class="count" id="c-courses">0</span>
+        </button>
+        <button class="tab-btn" data-tab="enrollments">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+          Enrollments <span class="count" id="c-enrollments">0</span>
+        </button>
+        <button class="tab-btn" data-tab="assignments">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+          Assignments <span class="count" id="c-assignments">0</span>
+        </button>
+        <button class="tab-btn" data-tab="submissions">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          Submissions <span class="count" id="c-submissions">0</span>
+        </button>
+        <button class="tab-btn" data-tab="grades">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+          Grades <span class="count" id="c-grades">0</span>
+        </button>
+      </div>
+
+      <!-- Panels are generated dynamically -->
+      <div id="panels"></div>
+
+      <div style="padding:0 24px 24px">
+        <div class="log">
+          <div class="log-head"><span>Activity Log</span><button onclick="clearLog()">Clear</button></div>
+          <div id="log-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API DOCS -->
+<section id="api">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">For your Flask backend</span>
+      <h2>Drop-in REST endpoints.</h2>
+      <p>Replace the <code style="color:#c4b5fd">MOCK</code> store with real calls. Every action below is already wired to one of these routes.</p>
+    </div>
+    <div class="features">
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+        <h3>/api/users</h3>
+        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
+          <span style="color:#67e8f9">GET</span> /api/users<br>
+          <span style="color:#86efac">POST</span> /api/users<br>
+          <span style="color:#fcd34d">PUT</span> /api/users/&lt;id&gt;<br>
+          <span style="color:#fda4af">DELETE</span> /api/users/&lt;id&gt;
+        </p>
+      </div>
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/></svg></div>
+        <h3>/api/courses</h3>
+        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
+          <span style="color:#67e8f9">GET</span> /api/courses<br>
+          <span style="color:#86efac">POST</span> /api/courses<br>
+          <span style="color:#fcd34d">PUT</span> /api/courses/&lt;id&gt;<br>
+          <span style="color:#fda4af">DELETE</span> /api/courses/&lt;id&gt;
+        </p>
+      </div>
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/></svg></div>
+        <h3>/api/enrollments</h3>
+        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
+          <span style="color:#67e8f9">GET</span> /api/enrollments<br>
+          <span style="color:#86efac">POST</span> /api/enrollments<br>
+          <span style="color:#fda4af">DELETE</span> /api/enrollments/&lt;id&gt;
+        </p>
+      </div>
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></div>
+        <h3>/api/assignments</h3>
+        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
+          <span style="color:#67e8f9">GET</span> /api/assignments<br>
+          <span style="color:#86efac">POST</span> /api/assignments<br>
+          <span style="color:#fcd34d">PUT</span> /api/assignments/&lt;id&gt;<br>
+          <span style="color:#fda4af">DELETE</span> /api/assignments/&lt;id&gt;
+        </p>
+      </div>
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
+        <h3>/api/submissions</h3>
+        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
+          <span style="color:#67e8f9">GET</span> /api/submissions<br>
+          <span style="color:#86efac">POST</span> /api/submissions<br>
+          <span style="color:#fcd34d">PUT</span> /api/submissions/&lt;id&gt;<br>
+          <span style="color:#fda4af">DELETE</span> /api/submissions/&lt;id&gt;
+        </p>
+      </div>
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
+        <h3>/api/grades</h3>
+        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
+          <span style="color:#67e8f9">GET</span> /api/grades<br>
+          <span style="color:#86efac">POST</span> /api/grades<br>
+          <span style="color:#fcd34d">PUT</span> /api/grades/&lt;id&gt;<br>
+          <span style="color:#fda4af">DELETE</span> /api/grades/&lt;id&gt;
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Team</span>
+      <h2>Built by three engineers, one vision.</h2>
+      <p>Submitted to <b style="color:#fff">Ms. Pinki Kumari</b>, Assistant Professor — School of Computing, DIT University, Dehradun.</p>
+    </div>
+    <div class="team">
+      <div class="member reveal"><div class="avatar">AS</div><h4>Ayush Sharma</h4><span>SAP 1000025847 · Sec P</span></div>
+      <div class="member reveal"><div class="avatar">SB</div><h4>Shivam Bhatia</h4><span>SAP 1000025864 · Sec P</span></div>
+      <div class="member reveal"><div class="avatar">DS</div><h4>Devansh Sharma</h4><span>SAP 1000024485 · Sec P</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="container">
+    <div class="cta-card reveal">
+      <span class="eyebrow"><span class="dot"></span> CSN205 Project · April 2026</span>
+      <h2 style="margin-top:18px">Ready to plug in your Flask backend?</h2>
+      <p style="color:var(--muted);max-width:560px;margin:8px auto 24px">All UI actions are routed through a single <code style="color:#c4b5fd">api()</code> function — swap mock storage for <code style="color:#c4b5fd">fetch()</code> calls and you're live.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="#console">Open Console</a>
+        <a class="btn btn-ghost" href="#api">View Endpoints</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">© 2026 <b>EduNova</b> — Smart E-Learning Management System · DIT University, Dehradun · Crafted for CSN205</div>
+</footer>
+
+<!-- Modal -->
+<div class="modal-back" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><h3 id="modal-title">Edit</h3><p id="modal-sub">Fill out the fields below</p></div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* ============================================================
+   EduNova — Frontend with mock CRUD
+   Replace the body of api() to hit your Flask backend.
+   ============================================================ */
+
+
+const nextId = (arr, key) => arr.length ? Math.max(...arr.map(r=>r[key])) + 1 : 1;
+
+// ---------- API LAYER (swap with Flask) ----------
+/*
+  When wiring to Flask, replace the body of api() with something like:
+
+  async function api(method, resource, id, body){
+    const url = `/api/${resource}` + (id ? `/${id}` : '');
+    const res = await fetch(url, {
+      method,
+      headers: {'Content-Type':'application/json'},
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    return method === 'DELETE' ? null : await res.json();
+  }
+*/
+async function api(method, resource, id, body){
+  const url = `/api/${resource}` + (id ? `/${id}` : '');
+
+  log(method, url);
+
+  const res = await fetch(url, {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+
+  if (!res.ok) {
+    throw new Error(`Error ${res.status}`);
+  }
+
+  return method === 'DELETE' ? null : await res.json();
+}
+
+// ---------- Schema-driven UI ----------
+const SCHEMA = {
+  users: {
+    pk:'user_id', label:'User', plural:'Users',
+    columns:[
+      {key:'user_id', label:'ID', render:v=>`<span class="id-chip">#${v}</span>`},
+      {key:'name', label:'Name'},
+      {key:'email', label:'Email'},
+      {key:'role', label:'Role', render:v=>`<span class="role-chip role-${v}">${v}</span>`},
+    ],
+    fields:[
+      {key:'name', label:'Full name', type:'text', required:true, placeholder:'Jane Doe'},
+      {key:'email', label:'Email', type:'email', required:true, placeholder:'jane@dit.edu'},
+      {key:'password', label:'Password', type:'password', required:true, placeholder:'••••••••'},
+      {key:'role', label:'Role', type:'select', options:['Student','Instructor'], required:true},
+    ],
+    search:r => `${r.name} ${r.email} ${r.role}`,
+  },
+  courses: {
+    pk:'course_id', label:'Course', plural:'Courses',
+    columns:[
+      {key:'course_id', label:'ID', render:v=>`<span class="id-chip">#${v}</span>`},
+      {key:'title', label:'Title'},
+      {key:'description', label:'Description'},
+      {key:'instructor_id', label:'Instructor', render:v=>nameOf('users','user_id',v)},
+    ],
+    fields:[
+      {key:'title', label:'Title', type:'text', required:true, placeholder:'Data Structures'},
+      {key:'description', label:'Description', type:'textarea', placeholder:'Short description...'},
+      {key:'instructor_id', label:'Instructor', type:'fk', resource:'users', filter:r=>r.role==='Instructor', display:r=>r.name, required:true},
+    ],
+    search:r => `${r.title} ${r.description}`,
+  },
+  enrollments: {
+    pk:'enroll_id', label:'Enrollment', plural:'Enrollments',
+    columns:[
+      {key:'enroll_id', label:'ID', render:v=>`<span class="id-chip">#${v}</span>`},
+      {key:'user_id', label:'Student', render:v=>nameOf('users','user_id',v)},
+      {key:'course_id', label:'Course', render:v=>nameOf('courses','course_id',v,'title')},
+      {key:'enroll_date', label:'Enrolled on'},
+    ],
+    fields:[
+      {key:'user_id', label:'Student', type:'fk', resource:'users', filter:r=>r.role==='Student', display:r=>r.name, required:true},
+      {key:'course_id', label:'Course', type:'fk', resource:'courses', display:r=>r.title, required:true},
+      {key:'enroll_date', label:'Enroll date', type:'date', required:true},
+    ],
+    search:r => `${nameOf('users','user_id',r.user_id)} ${nameOf('courses','course_id',r.course_id,'title')}`,
+    noEdit:true,
+  },
+  assignments: {
+    pk:'assignment_id', label:'Assignment', plural:'Assignments',
+    columns:[
+      {key:'assignment_id', label:'ID', render:v=>`<span class="id-chip">#${v}</span>`},
+      {key:'title', label:'Title'},
+      {key:'course_id', label:'Course', render:v=>nameOf('courses','course_id',v,'title')},
+      {key:'due_date', label:'Due date'},
+    ],
+    fields:[
+      {key:'title', label:'Title', type:'text', required:true, placeholder:'Lab assignment 1'},
+      {key:'description', label:'Description', type:'textarea'},
+      {key:'course_id', label:'Course', type:'fk', resource:'courses', display:r=>r.title, required:true},
+      {key:'due_date', label:'Due date', type:'date', required:true},
+    ],
+    search:r => `${r.title} ${r.description||''}`,
+  },
+  submissions: {
+    pk:'submission_id', label:'Submission', plural:'Submissions',
+    columns:[
+      {key:'submission_id', label:'ID', render:v=>`<span class="id-chip">#${v}</span>`},
+      {key:'user_id', label:'Student', render:v=>nameOf('users','user_id',v)},
+      {key:'assignment_id', label:'Assignment', render:v=>nameOf('assignments','assignment_id',v,'title')},
+      {key:'submission_date', label:'Date'},
+      {key:'status', label:'Status', render:v=>`<span class="status-chip status-${v}">${v}</span>`},
+    ],
+    fields:[
+      {key:'user_id', label:'Student', type:'fk', resource:'users', filter:r=>r.role==='Student', display:r=>r.name, required:true},
+      {key:'assignment_id', label:'Assignment', type:'fk', resource:'assignments', display:r=>r.title, required:true},
+      {key:'submission_date', label:'Submission date', type:'date', required:true},
+      {key:'status', label:'Status', type:'select', options:['Submitted','Pending','Late'], required:true},
+    ],
+    search:r => `${nameOf('users','user_id',r.user_id)} ${r.status}`,
+  },
+  grades: {
+    pk:'grade_id', label:'Grade', plural:'Grades',
+    columns:[
+      {key:'grade_id', label:'ID', render:v=>`<span class="id-chip">#${v}</span>`},
+      {key:'submission_id', label:'Submission', render:v=>`<span class="id-chip">#${v}</span>`},
+      {key:'marks', label:'Marks', render:v=>`<b style="color:${v>=85?'#86efac':v>=60?'#fcd34d':'#fda4af'}">${v}</b>`},
+      {key:'feedback', label:'Feedback'},
+    ],
+    fields:[
+      {key:'submission_id', label:'Submission', type:'fk', resource:'submissions', display:r=>`#${r.submission_id} — ${nameOf('users','user_id',r.user_id)}`, required:true},
+      {key:'marks', label:'Marks (0-100)', type:'number', required:true, min:0, max:100},
+      {key:'feedback', label:'Feedback', type:'textarea', placeholder:'Well done!'},
+    ],
+    search:r => `${r.feedback||''}`,
+  },
+};
+
+function nameOf(resource, pk, id, key='name'){
+  const list = window.cache?.[resource] || [];
+  const r = list.find(x => x[pk] === id);
+  return r ? r[key] : `<span style="color:var(--muted)">—</span>`;
+}
+
+// ---------- State ----------
+let activeTab = 'users';
+let searchTerm = {};
+let editing = null;     // {resource, row} or null when creating
+let editingResource = null;
+
+// ---------- Render panels ----------
+const panelsEl = document.getElementById('panels');
+Object.keys(SCHEMA).forEach(res => {
+  const s = SCHEMA[res];
+  const panel = document.createElement('div');
+  panel.className = 'panel' + (res===activeTab?' active':'');
+  panel.id = 'panel-' + res;
+  panel.innerHTML = `
+    <div class="panel-head">
+      <div>
+        <h3>${s.plural}</h3>
+        <p>Manage ${s.plural.toLowerCase()} — create, edit and delete records.</p>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openCreate('${res}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        New ${s.label}
+      </button>
+    </div>
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input placeholder="Search ${s.plural.toLowerCase()}..." oninput="onSearch('${res}', this.value)" />
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="refresh('${res}')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+        Refresh
+      </button>
+    </div>
+    <div class="tbl-wrap" id="tbl-${res}"></div>
+  `;
+  panelsEl.appendChild(panel);
+});
+
+// ---------- Tabs ----------
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  activeTab = b.dataset.tab;
+  document.getElementById('panel-'+activeTab).classList.add('active');
+  document.getElementById('active-endpoint').textContent = activeTab;
+}));
+
+// ---------- Table render ----------
+async function refresh(resource){
+  const data = await api('GET', resource);
+
+  // 🔥 THIS LINE FIXES EVERYTHING
+  window.cache = window.cache || {};
+  window.cache[resource] = data;
+
+  const s = SCHEMA[resource];
+  const term = (searchTerm[resource]||'').toLowerCase();
+  const filtered = term ? data.filter(r => s.search(r).toLowerCase().includes(term)) : data;
+  const target = document.getElementById('tbl-'+resource);
+
+  if(!filtered.length){
+    target.innerHTML = `<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      <div>No ${s.plural.toLowerCase()} found.</div>
+    </div>`;
+  } else {
+    target.innerHTML = `<table>
+      <thead><tr>
+        ${s.columns.map(c=>`<th>${c.label}</th>`).join('')}
+        <th style="text-align:right">Actions</th>
+      </tr></thead>
+      <tbody>
+        ${filtered.map(r=>`<tr class="row">
+          ${s.columns.map(c=>`<td>${c.render?c.render(r[c.key],r):escape(r[c.key])}</td>`).join('')}
+          <td><div class="row-actions">
+            ${s.noEdit?'':`<button class="btn btn-warn btn-sm" onclick='openEdit("${resource}", ${r[s.pk]})'>Edit</button>`}
+            <button class="btn btn-danger btn-sm" onclick='confirmDelete("${resource}", ${r[s.pk]})'>Delete</button>
+          </div></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  updateCounts();
+}
+
+function escape(v){ return v==null?'':String(v).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]); }
+function onSearch(resource, val){ searchTerm[resource]=val; refresh(resource); }
+
+function updateCounts(){
+  Object.keys(SCHEMA).forEach(r => {
+    const c = document.getElementById('c-'+r);
+    if(c) c.textContent = (window.cache[r] || []).length;
+  });
+
+  document.getElementById('kpi-users').textContent = (window.cache.users || []).length;
+  document.getElementById('kpi-courses').textContent = (window.cache.courses || []).length;
+  document.getElementById('kpi-assign').textContent = (window.cache.assignments || []).length;
+  document.getElementById('kpi-grades').textContent = (window.cache.grades || []).length;
+}
+
+// ---------- Modal: create / edit ----------
+function openCreate(resource){ openModal(resource, null); }
+function openEdit(resource, id){
+  const row = (window.cache[resource] || []).find(r => r[SCHEMA[resource].pk] === id);
+  openModal(resource, row);
+}
+function openModal(resource, row){
+  editingResource = resource;
+  editing = row;
+  const s = SCHEMA[resource];
+  document.getElementById('modal-title').textContent = (row?'Edit ':'New ')+s.label;
+  document.getElementById('modal-sub').textContent  = row ? `Updating ${s.label.toLowerCase()} #${row[s.pk]}` : `Add a new ${s.label.toLowerCase()} to the database`;
+  const body = document.getElementById('modal-body');
+  body.innerHTML = s.fields.map(f => fieldHTML(f, row)).join('');
+  document.getElementById('modal-save').onclick = () => save();
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+function fieldHTML(f, row){
+  const v = row ? row[f.key] : '';
+  let input = '';
+  if(f.type==='textarea') input = `<textarea name="${f.key}" placeholder="${f.placeholder||''}">${escape(v)}</textarea>`;
+  else if(f.type==='select') input = `<select name="${f.key}">${f.options.map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('')}</select>`;
+  else if(f.type==='fk'){
+    const opts = (window.cache[f.resource] || []).filter(r => f.filter ? f.filter(r) : true);
+    const refPk = SCHEMA[f.resource].pk;
+    input = `<select name="${f.key}">
+      <option value="">— select —</option>
+      ${opts.map(o=>`<option value="${o[refPk]}" ${o[refPk]==v?'selected':''}>#${o[refPk]} · ${escape(f.display(o))}</option>`).join('')}
+    </select>`;
+  } else {
+    const extra = (f.min!=null?` min="${f.min}"`:'') + (f.max!=null?` max="${f.max}"`:'');
+    input = `<input type="${f.type}" name="${f.key}" value="${escape(v)}" placeholder="${f.placeholder||''}"${extra} />`;
+  }
+  return `<div class="field"><label>${f.label}${f.required?' *':''}</label>${input}</div>`;
+}
+
+async function save(){
+  const s = SCHEMA[editingResource];
+  const body = {};
+  let valid = true;
+  s.fields.forEach(f => {
+    const el = document.querySelector(`#modal-body [name="${f.key}"]`);
+    let v = el.value;
+    if(f.type==='number' || f.type==='fk') v = v===''?null:Number(v);
+    if(f.required && (v===''||v==null)){ valid=false; el.style.borderColor='rgba(244,63,94,.6)'; }
+    body[f.key] = v;
+  });
+  if(!valid){ toast('err','Validation failed','Please fill all required fields.'); return; }
+  try{
+    if(editing){
+      await api('PUT', editingResource, editing[s.pk], body);
+      toast('ok','Updated', `${s.label} #${editing[s.pk]} saved.`);
+    } else {
+      const row = await api('POST', editingResource, null, body);
+      toast('ok','Created', `New ${s.label.toLowerCase()} added (#${row[s.pk]}).`);
+    }
+    closeModal();
+    refresh(editingResource);
+  }catch(e){ toast('err','Error', e.message); }
+}
+
+async function confirmDelete(resource, id){
+  if(!confirm(`Delete this ${SCHEMA[resource].label.toLowerCase()} (#${id})? This cannot be undone.`)) return;
+  try{
+    await api('DELETE', resource, id);
+    toast('ok','Deleted', `${SCHEMA[resource].label} #${id} removed.`);
+    refresh(resource);
+  }catch(e){ toast('err','Error', e.message); }
+}
+
+// ---------- Activity log + toasts ----------
+const logBody = document.getElementById('log-body');
+const heroAct = document.getElementById('hero-activity');
+function log(method, path){
+  const t = new Date().toLocaleTimeString();
+  const row = document.createElement('div');
+  row.className = 'log-line';
+  row.innerHTML = `<span class="m m-${method}">${method}</span><span>${path}</span><span class="t">${t}</span>`;
+  logBody.prepend(row);
+  while(logBody.children.length > 50) logBody.lastChild.remove();
+
+  const hr = document.createElement('div');
+  hr.style.cssText='display:flex;gap:8px;align-items:center;color:var(--muted)';
+  hr.innerHTML = `<span class="m m-${method}" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;width:60px;text-align:center">${method}</span><span style="color:#fff">${path}</span>`;
+  heroAct.prepend(hr);
+  while(heroAct.children.length > 4) heroAct.lastChild.remove();
+}
+function clearLog(){ logBody.innerHTML=''; }
+
+const toastEl = document.getElementById('toasts');
+function toast(kind, title, msg){
+  const ICONS = {
+    ok:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>',
+    err:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>',
+    info:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M12 6h.01"/></svg>'
+  };
+  const t = document.createElement('div');
+  t.className = 'toast '+kind;
+  t.innerHTML = `<div class="ti">${ICONS[kind]}</div><div><b>${title}</b><span>${msg}</span></div>`;
+  toastEl.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(20px)'; t.style.transition='.3s'; setTimeout(()=>t.remove(),300); }, 3200);
+}
+
+// ---------- Boot ----------
+Object.keys(SCHEMA).forEach(refresh);
+toast('ok','Connected','Flask backend is live 🚀');
+
+// Reveal on scroll
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    if(id.length > 1){ e.preventDefault(); document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'}); }
+  });
+});
+
+// Close modal on backdrop click / Esc
+document.getElementById('modal').addEventListener('click', e => { if(e.target.id==='modal') closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+</body>
+</html>
