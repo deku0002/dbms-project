@@ -10,15 +10,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#070b17; --bg-2:#0b1124;
+  --bg:#0a0613; --bg-2:#120824;
   --surface:rgba(255,255,255,0.04); --surface-2:rgba(255,255,255,0.06);
   --border:rgba(255,255,255,0.08); --border-2:rgba(255,255,255,0.14);
-  --text:#e9ecf5; --muted:#9aa3b8;
-  --primary:#7c5cff; --primary-2:#22d3ee; --accent:#34d399;
+  --text:#f1ecff; --muted:#a39bbf;
+  --primary:#a855f7; --primary-2:#ec4899; --accent:#34d399;
   --warn:#f59e0b; --danger:#f43f5e;
-  --grad:linear-gradient(135deg,#7c5cff 0%,#22d3ee 100%);
-  --grad-soft:linear-gradient(135deg,rgba(124,92,255,.25),rgba(34,211,238,.18));
-  --shadow-lg:0 30px 80px -30px rgba(124,92,255,.45),0 10px 30px -10px rgba(0,0,0,.6);
+  --grad:linear-gradient(135deg,#a855f7 0%,#ec4899 100%);
+  --grad-soft:linear-gradient(135deg,rgba(168,85,247,.28),rgba(236,72,153,.20));
+  --shadow-lg:0 30px 80px -30px rgba(168,85,247,.55),0 10px 30px -10px rgba(0,0,0,.6);
   --radius:18px;
 }
 *{box-sizing:border-box}
@@ -28,10 +28,10 @@ a{color:inherit;text-decoration:none}
 code,pre{font-family:'JetBrains Mono',ui-monospace,monospace}
 
 .bg-fx{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
-  radial-gradient(1000px 600px at 85% -10%,rgba(124,92,255,.25),transparent 60%),
-  radial-gradient(900px 500px at -10% 20%,rgba(34,211,238,.18),transparent 60%),
+  radial-gradient(1000px 600px at 85% -10%,rgba(168,85,247,.28),transparent 60%),
+  radial-gradient(900px 500px at -10% 20%,rgba(236,72,153,.20),transparent 60%),
   radial-gradient(700px 400px at 50% 110%,rgba(52,211,153,.12),transparent 60%),
-  linear-gradient(180deg,#070b17 0%,#0a0f22 100%);}
+  linear-gradient(180deg,#0a0613 0%,#0f0820 100%);}
 .bg-grid{position:fixed;inset:0;z-index:-1;background-image:
   linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
   linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
@@ -234,12 +234,10 @@ footer b{color:#fff}
       <ul>
         <li><a href="#features">Features</a></li>
         <li><a href="#console">Console</a></li>
-        <li><a href="#api">API</a></li>
         <li><a href="#team">Team</a></li>
       </ul>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost" href="#api">API Docs</a>
       <a class="btn btn-primary" href="#console">Open Console →</a>
     </div>
   </div>
@@ -251,12 +249,12 @@ footer b{color:#fff}
     <div class="reveal">
       <span class="eyebrow"><span class="dot"></span> CSN205 · Database Management Systems</span>
       <h1>Learning, <span class="grad">re-engineered</span> on a relational core.</h1>
-      <p class="lede">EduNova is a database-driven Smart LMS with a full interactive admin console. Create, read, update and delete across users, courses, enrollments, assignments and grades — ready to wire into your Flask backend.</p>
+      <p class="lede">EduNova is a database-driven Smart LMS with a full interactive admin console. Create, read, update and delete across users, courses, enrollments, assignments and grades — running live on a Flask backend hosted on AWS EC2 with MySQL on AWS RDS.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#console">Try the Console
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a class="btn btn-ghost" href="#api">REST Endpoints</a>
+        <a class="btn btn-ghost" href="#features">Explore Features</a>
       </div>
       <div class="kpis">
         <div class="kpi"><b id="kpi-users">0</b><span>Users</span></div>
@@ -268,15 +266,19 @@ footer b{color:#fff}
 
     <div class="mock reveal">
       <div class="mock-head"><i></i><i></i><i></i><span>edunova.app / admin</span></div>
-      <div style="padding:14px;background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:14px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="padding:18px;background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <div>
-            <div style="font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-weight:700">Live Activity</div>
-            <div style="font-size:15px;font-weight:700;margin-top:2px">Recent operations</div>
+            <div style="font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-weight:700">Database Snapshot</div>
+            <div style="font-size:15px;font-weight:700;margin-top:2px">EduNova production schema</div>
           </div>
-          <span class="eyebrow" style="font-size:10px;padding:4px 10px"><span class="dot"></span> Connected</span>
+          <span class="eyebrow" style="font-size:10px;padding:4px 10px"><span class="dot"></span> Healthy</span>
         </div>
-        <div id="hero-activity" style="display:flex;flex-direction:column;gap:8px;font-family:'JetBrains Mono';font-size:12px"></div>
+        <div id="hero-snapshot" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);font-family:'JetBrains Mono'">
+          <span>MySQL 8 · AWS RDS</span>
+          <span style="color:#86efac">● Online</span>
+        </div>
       </div>
     </div>
   </div>
@@ -288,14 +290,14 @@ footer b{color:#fff}
     <div class="section-head reveal">
       <span class="eyebrow">Interactive admin</span>
       <h2>Manage every entity in real time.</h2>
-      <p>Full CRUD on each table — clicks fire mock REST calls. Plug in your Flask endpoints inside <code style="color:#c4b5fd">api()</code> at the bottom of this file.</p>
+      <p>Full CRUD on each table — every action talks to the live MySQL database on AWS RDS through the Flask service on EC2.</p>
     </div>
 
     <div class="console reveal">
       <div class="console-bar">
         <span class="dots"><i></i><i></i><i></i></span>
-        <div class="url">GET <span style="color:#86efac">/api/v1/</span><span id="active-endpoint">users</span></div>
-        <span class="status"><i></i> Mock mode</span>
+        <div class="url"><span style="color:#86efac">●</span> <span id="active-endpoint">users</span> · MySQL @ AWS RDS</div>
+        <span class="status"><i></i> Live · AWS</span>
       </div>
 
       <div class="tabbar" id="tabbar">
@@ -338,78 +340,6 @@ footer b{color:#fff}
   </div>
 </section>
 
-<!-- API DOCS -->
-<section id="api">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">For your Flask backend</span>
-      <h2>Drop-in REST endpoints.</h2>
-      <p>Replace the <code style="color:#c4b5fd">MOCK</code> store with real calls. Every action below is already wired to one of these routes.</p>
-    </div>
-    <div class="features">
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
-        <h3>/api/users</h3>
-        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
-          <span style="color:#67e8f9">GET</span> /api/users<br>
-          <span style="color:#86efac">POST</span> /api/users<br>
-          <span style="color:#fcd34d">PUT</span> /api/users/&lt;id&gt;<br>
-          <span style="color:#fda4af">DELETE</span> /api/users/&lt;id&gt;
-        </p>
-      </div>
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/></svg></div>
-        <h3>/api/courses</h3>
-        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
-          <span style="color:#67e8f9">GET</span> /api/courses<br>
-          <span style="color:#86efac">POST</span> /api/courses<br>
-          <span style="color:#fcd34d">PUT</span> /api/courses/&lt;id&gt;<br>
-          <span style="color:#fda4af">DELETE</span> /api/courses/&lt;id&gt;
-        </p>
-      </div>
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/></svg></div>
-        <h3>/api/enrollments</h3>
-        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
-          <span style="color:#67e8f9">GET</span> /api/enrollments<br>
-          <span style="color:#86efac">POST</span> /api/enrollments<br>
-          <span style="color:#fda4af">DELETE</span> /api/enrollments/&lt;id&gt;
-        </p>
-      </div>
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></div>
-        <h3>/api/assignments</h3>
-        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
-          <span style="color:#67e8f9">GET</span> /api/assignments<br>
-          <span style="color:#86efac">POST</span> /api/assignments<br>
-          <span style="color:#fcd34d">PUT</span> /api/assignments/&lt;id&gt;<br>
-          <span style="color:#fda4af">DELETE</span> /api/assignments/&lt;id&gt;
-        </p>
-      </div>
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
-        <h3>/api/submissions</h3>
-        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
-          <span style="color:#67e8f9">GET</span> /api/submissions<br>
-          <span style="color:#86efac">POST</span> /api/submissions<br>
-          <span style="color:#fcd34d">PUT</span> /api/submissions/&lt;id&gt;<br>
-          <span style="color:#fda4af">DELETE</span> /api/submissions/&lt;id&gt;
-        </p>
-      </div>
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
-        <h3>/api/grades</h3>
-        <p style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.9">
-          <span style="color:#67e8f9">GET</span> /api/grades<br>
-          <span style="color:#86efac">POST</span> /api/grades<br>
-          <span style="color:#fcd34d">PUT</span> /api/grades/&lt;id&gt;<br>
-          <span style="color:#fda4af">DELETE</span> /api/grades/&lt;id&gt;
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- TEAM -->
 <section id="team">
   <div class="container">
@@ -422,20 +352,6 @@ footer b{color:#fff}
       <div class="member reveal"><div class="avatar">AS</div><h4>Ayush Sharma</h4><span>SAP 1000025847 · Sec P</span></div>
       <div class="member reveal"><div class="avatar">SB</div><h4>Shivam Bhatia</h4><span>SAP 1000025864 · Sec P</span></div>
       <div class="member reveal"><div class="avatar">DS</div><h4>Devansh Sharma</h4><span>SAP 1000024485 · Sec P</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="cta">
-  <div class="container">
-    <div class="cta-card reveal">
-      <span class="eyebrow"><span class="dot"></span> CSN205 Project · April 2026</span>
-      <h2 style="margin-top:18px">Ready to plug in your Flask backend?</h2>
-      <p style="color:var(--muted);max-width:560px;margin:8px auto 24px">All UI actions are routed through a single <code style="color:#c4b5fd">api()</code> function — swap mock storage for <code style="color:#c4b5fd">fetch()</code> calls and you're live.</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <a class="btn btn-primary" href="#console">Open Console</a>
-        <a class="btn btn-ghost" href="#api">View Endpoints</a>
-      </div>
     </div>
   </div>
 </section>
@@ -711,6 +627,7 @@ function updateCounts(){
   document.getElementById('kpi-courses').textContent = (window.cache.courses || []).length;
   document.getElementById('kpi-assign').textContent = (window.cache.assignments || []).length;
   document.getElementById('kpi-grades').textContent = (window.cache.grades || []).length;
+  if(typeof renderHeroSnapshot==='function') renderHeroSnapshot();
 }
 
 // ---------- Modal: create / edit ----------
@@ -785,9 +702,30 @@ async function confirmDelete(resource, id){
   }catch(e){ toast('err','Error', e.message); }
 }
 
-// ---------- Activity log + toasts ----------
+// ---------- Activity log + hero snapshot + toasts ----------
 const logBody = document.getElementById('log-body');
-const heroAct = document.getElementById('hero-activity');
+const heroSnap = document.getElementById('hero-snapshot');
+const SNAP_META = {
+  users:       {label:'Users',       icon:'👥', color:'#a855f7'},
+  courses:     {label:'Courses',     icon:'📚', color:'#ec4899'},
+  enrollments: {label:'Enrollments', icon:'🎟️', color:'#34d399'},
+  assignments: {label:'Assignments', icon:'📝', color:'#f59e0b'},
+  submissions: {label:'Submissions', icon:'📨', color:'#22d3ee'},
+  grades:      {label:'Grades',      icon:'🏆', color:'#f43f5e'}
+};
+function renderHeroSnapshot(){
+  if(!heroSnap) return;
+  heroSnap.innerHTML = Object.keys(SNAP_META).map(k=>{
+    const m = SNAP_META[k]; const n = ((window.cache && window.cache[k]) || []).length;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px">
+      <div style="width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:${m.color}22;font-size:16px">${m.icon}</div>
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <b style="font-size:16px;color:#fff">${n}</b>
+        <span style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600">${m.label}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
 function log(method, path){
   const t = new Date().toLocaleTimeString();
   const row = document.createElement('div');
@@ -795,12 +733,7 @@ function log(method, path){
   row.innerHTML = `<span class="m m-${method}">${method}</span><span>${path}</span><span class="t">${t}</span>`;
   logBody.prepend(row);
   while(logBody.children.length > 50) logBody.lastChild.remove();
-
-  const hr = document.createElement('div');
-  hr.style.cssText='display:flex;gap:8px;align-items:center;color:var(--muted)';
-  hr.innerHTML = `<span class="m m-${method}" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;width:60px;text-align:center">${method}</span><span style="color:#fff">${path}</span>`;
-  heroAct.prepend(hr);
-  while(heroAct.children.length > 4) heroAct.lastChild.remove();
+  renderHeroSnapshot();
 }
 function clearLog(){ logBody.innerHTML=''; }
 
